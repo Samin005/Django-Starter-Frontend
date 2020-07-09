@@ -1,0 +1,9 @@
+<hr>
+<div *ngIf="showLoading" style="text-align: center">Loading...</div>
+<div *ngIf="!showLoading" class="card-container">
+  <img src="{{currentProduct.image_url}}" alt="product image" height="70">
+  <div class="card">
+    <div>Product name: {{currentProduct.name}}</div>
+    <div>Product price: {{currentProduct.price}}</div>
+  </div>
+</div>

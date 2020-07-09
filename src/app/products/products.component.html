@@ -1,0 +1,9 @@
+<div style="margin: 5%">
+  <h3>Products:</h3>
+  <div class="card-container">
+    <div *ngFor="let product of products" class="card" (click)="selectProduct(product.url)">
+      {{ product.name }}
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>

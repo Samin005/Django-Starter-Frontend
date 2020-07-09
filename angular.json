@@ -119,6 +119,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "Django-Starter-Frontend"
+    }
+  },
+  "defaultProject": "Django-Starter-Frontend",
+  "cli": {
+    "analytics": "949f80e0-2b65-4e77-907d-b9b0b111e8a0"
+  }
 }
