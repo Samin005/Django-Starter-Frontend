@@ -1,4 +1,11 @@
 <div style="margin: 5%">
+  <div *ngIf="user.is_authenticated">
+    <div>Welcome {{ user.username }}</div>
+    <button (click)="logout()">Logout</button>
+  </div>
+  <div *ngIf="!user.is_authenticated">
+    <button (click)="login()" >Login</button>
+  </div>
   <h3>Products:</h3>
   <div class="card-container">
     <div *ngFor="let product of products" class="card" (click)="selectProduct(product.url)">
@@ -6,4 +13,5 @@
     </div>
   </div>
 </div>
+
 <router-outlet></router-outlet>

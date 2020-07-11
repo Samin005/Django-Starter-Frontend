@@ -18,7 +18,7 @@ export class ProductDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
-      this.http.get(this.productsService.productsRootUrl + params.id)
+      this.http.get(this.productsService.productsApiRootUrl + params.id)
         .subscribe(product => {
           this.currentProduct = product as any;
           this.showLoading = false;
