@@ -39,29 +39,53 @@ export class ProductsComponent implements OnInit {
       .catch(error => console.log(error));
   }
 
-  login(): void {
-    this.user.username = 'samin';
-    this.user.password = 'samin005';
-    this.updateAuthHeader();
-    this.http.get(this.productsService.productsRootUrl + 'user/', {
-      headers: this.authHeader
-    }).subscribe(currentUser => {
-        this.user = currentUser as any;
-        console.log(currentUser);
-      }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+  loginUsingAuthToken(): void {
+    this.user.username = 'john';
+    this.user.password = 'johnpassword';
+    this.http.post('http://127.0.0.1:8000/products/auth-token/', {
+      username: this.user.username,
+      password: this.user.password
+    }, {headers: this.authHeader}).subscribe((response: any) => {
+      console.log(response);
+      this.updateAuthHeaderForAuthToken(response.token);
+      this.http.get('http://127.0.0.1:8000/products/user/', {headers: this.authHeader})
+        .subscribe(currentUser => {
+          this.user = currentUser as any;
+          console.log(currentUser);
+        }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+    }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+  }
+
+  updateAuthHeaderForAuthToken(token): void {
+    this.authHeader = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'Token ' + token
+    });
   }
 
   logout(): void {
-    this.user = {
-      username: '',
-      password: '',
-      is_anonymous: true,
-      is_authenticated: false
-    };
-    this.updateAuthHeader();
+    this.http.get('http://127.0.0.1:8000/products/user/logout/', {headers: this.authHeader})
+      .subscribe(currentUser => {
+        this.user = currentUser as any;
+        console.log(currentUser);
+      }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+    this.authHeader = new HttpHeaders();
   }
 
-  updateAuthHeader(): void {
+  loginUsingBasicAuth(): void {
+    this.user.username = 'john';
+    this.user.password = 'johnpassword';
+    this.updateAuthHeaderForBasicAuth();
+    this.http.post(this.productsService.productsRootUrl + 'user/', {
+      username: this.user.username,
+      password: this.user.password
+    }, {headers: this.authHeader}).subscribe(currentUser => {
+      this.user = currentUser as any;
+      console.log(currentUser);
+    }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+  }
+
+  updateAuthHeaderForBasicAuth(): void {
     this.authHeader = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'Basic ' + btoa(this.user.username + ':' + this.user.password)

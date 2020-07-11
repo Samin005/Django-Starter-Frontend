@@ -4,7 +4,7 @@
     <button (click)="logout()">Logout</button>
   </div>
   <div *ngIf="!user.is_authenticated">
-    <button (click)="login()" >Login</button>
+    <button (click)="loginUsingAuthToken()" >Login</button>
   </div>
   <h3>Products:</h3>
   <div class="card-container">
