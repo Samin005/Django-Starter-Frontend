@@ -2,9 +2,11 @@
   <div *ngIf="user.is_authenticated">
     <div>Welcome {{ user.username }}</div>
     <button (click)="logout()">Logout</button>
+    <button (click)="getUsers()">Get Users</button>
+    <button (click)="refreshToken()">Refresh Token</button>
   </div>
   <div *ngIf="!user.is_authenticated">
-    <button (click)="loginUsingAuthToken()" >Login</button>
+    <button (click)="loginUsingJWT()" >Login</button>
   </div>
   <h3>Products:</h3>
   <div class="card-container">

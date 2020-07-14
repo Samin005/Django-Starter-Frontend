@@ -39,6 +39,43 @@ export class ProductsComponent implements OnInit {
       .catch(error => console.log(error));
   }
 
+  loginUsingJWT(): void {
+    this.user.username = 'john';
+    this.user.password = 'johnpassword';
+    this.http.post('http://127.0.0.1:8000/products/jwt-token/', {
+      username: this.user.username,
+      password: this.user.password
+    }, {headers: this.authHeader}).subscribe((response: any) => {
+      localStorage.setItem('access-token', response.access);
+      localStorage.setItem('refresh-token', response.refresh);
+      console.log(response);
+      this.updateAuthHeaderForJWT();
+      this.http.get('http://127.0.0.1:8000/products/user/', {headers: this.authHeader})
+        .subscribe(currentUser => {
+          this.user = currentUser as any;
+          console.log(currentUser);
+        }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+    }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+  }
+
+  updateAuthHeaderForJWT(): void {
+    this.authHeader = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + localStorage.getItem('access-token')
+    });
+  }
+
+  refreshToken(): void {
+    this.authHeader = new HttpHeaders();
+    this.http.post('http://127.0.0.1:8000/products/jwt-token-refresh/', {
+      refresh: localStorage.getItem('refresh-token')
+    }, {headers: this.authHeader})
+      .subscribe((newToken: any) => {
+        console.log(newToken);
+        localStorage.setItem('access-token', newToken.access);
+      }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
+  }
+
   loginUsingAuthToken(): void {
     this.user.username = 'john';
     this.user.password = 'johnpassword';
@@ -90,6 +127,14 @@ export class ProductsComponent implements OnInit {
       'Content-Type': 'application/json',
       Authorization: 'Basic ' + btoa(this.user.username + ':' + this.user.password)
     });
+  }
+
+  getUsers(): void {
+    this.updateAuthHeaderForJWT();
+    this.http.get('http://127.0.0.1:8000/products/api/user/', {headers: this.authHeader})
+      .subscribe(users => {
+        console.log(users);
+      }, (errorResponse: HttpErrorResponse) => console.log(errorResponse.error));
   }
 
   // setRedirectUrl(): void {
