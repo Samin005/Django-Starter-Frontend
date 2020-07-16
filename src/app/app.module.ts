@@ -6,8 +6,9 @@ import { AppComponent } from './app.component';
 import { ProductsComponent } from './products/products.component';
 import { HomeComponent } from './home/home.component';
 import { PollsComponent } from './polls/polls.component';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { ProductDetailsComponent } from './products/product-details/product-details.component';
+import {JwtInterceptor} from './auth/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { ProductDetailsComponent } from './products/product-details/product-deta
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
