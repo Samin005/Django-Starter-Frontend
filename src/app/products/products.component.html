@@ -9,6 +9,13 @@
   <div *ngIf="!authService.user.is_authenticated">
     <button (click)="login()" >Login</button>
   </div>
+  <div *ngIf="socialUser == null">
+    <button (click)="signInWithGoogle()">Sign-in with Google</button>
+  </div>
+  <div *ngIf="socialUser != null">
+    <button (click)="signOut()">Sign-out</button>
+    <button (click)="getUsers()">Get Users</button>
+  </div>
   <h3>Products:</h3>
   <div class="card-container">
     <div *ngFor="let product of products" class="card" (click)="selectProduct(product.url)">

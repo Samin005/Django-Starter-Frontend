@@ -3,6 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {ProductsService} from './products.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../auth/auth.service';
+import {GoogleLoginProvider, SocialAuthService, SocialUser} from 'angularx-social-login';
 
 @Component({
   selector: 'app-products',
@@ -13,12 +14,14 @@ export class ProductsComponent implements OnInit {
 
   authHeader = new HttpHeaders();
   products: any = [];
+  socialUser: SocialUser;
 
   constructor(private http: HttpClient,
               public productsService: ProductsService,
               public authService: AuthService,
               private router: Router,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              private socialAuthService: SocialAuthService) {
   }
 
   ngOnInit(): void {
@@ -29,6 +32,15 @@ export class ProductsComponent implements OnInit {
     if (localStorage.getItem('refresh-token') !== null) {
       this.getCurrentUser();
     }
+    this.socialAuthService.authState.subscribe((socialUser) => {
+      console.log(socialUser);
+      this.socialUser = socialUser;
+      if (socialUser !== null) {
+        this.http.post('http://127.0.0.1:8000/products/dj-rest-auth/google/',
+          {access_token: socialUser.authToken})
+          .subscribe((responseToken: any) => localStorage.setItem('auth-token', responseToken.key));
+      }
+    });
   }
 
   selectProduct(productURL: string): void {
@@ -36,6 +48,19 @@ export class ProductsComponent implements OnInit {
     productID = productID.replace('/', '');
     this.router.navigate([productID], {relativeTo: this.activatedRoute})
       .catch(error => console.log(error));
+  }
+
+  signInWithGoogle(): void {
+    this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).catch(error => console.log(error));
+  }
+
+  signOut(): void {
+    this.http.post('http://127.0.0.1:8000/products/dj-rest-auth/logout/', {auth_token: localStorage.getItem('auth-token')})
+      .subscribe((response) => {
+        console.log(response);
+        this.socialAuthService.signOut().catch(error => console.log(error));
+        localStorage.removeItem('auth-token');
+      });
   }
 
   login(): void {

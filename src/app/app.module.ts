@@ -9,6 +9,8 @@ import { PollsComponent } from './polls/polls.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { ProductDetailsComponent } from './products/product-details/product-details.component';
 import {JwtInterceptor} from './auth/jwt.interceptor';
+import {GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
+import {SocialAuthInterceptor} from './auth/social-auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -21,9 +23,27 @@ import {JwtInterceptor} from './auth/jwt.interceptor';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    SocialLoginModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}],
+  providers: [
+    // {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: SocialAuthInterceptor, multi: true},
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: true,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '672434620947-t5599gmsd7b26rqfp7uuo5rh7eme1bc4.apps.googleusercontent.com'
+            ),
+          },
+        ],
+      } as SocialAuthServiceConfig,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
