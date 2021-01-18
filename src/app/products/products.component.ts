@@ -55,7 +55,7 @@ export class ProductsComponent implements OnInit {
   }
 
   signOut(): void {
-    this.http.post('http://127.0.0.1:8000/products/dj-rest-auth/logout/', {auth_token: localStorage.getItem('auth-token')})
+    this.http.post('http://127.0.0.1:8000/products/dj-rest-auth/google/logout/', {})
       .subscribe((response) => {
         console.log(response);
         this.socialAuthService.signOut().catch(error => console.log(error));
